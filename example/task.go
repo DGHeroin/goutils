@@ -2,7 +2,7 @@ package main
 
 import (
     "fmt"
-    "goutils/task"
+    "github.com/DGHeroin/goutils/task"
     "sync/atomic"
     "time"
 )
