@@ -14,7 +14,7 @@ var (
 func PostJson(url string, r io.Reader) *Cmd {
     result := &Cmd{}
     client := GetClient()
-    req, err := http.NewRequest(http.MethodPost, url, r)
+    req, err := newRequest(http.MethodPost, url, r)
     if err != nil {
         result.err = err
         return result

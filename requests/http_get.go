@@ -5,7 +5,7 @@ import "net/http"
 func GetJson(url string) *Cmd {
     result := &Cmd{}
     client := GetClient()
-    req, err := http.NewRequest(http.MethodGet, url, nil)
+    req, err := newRequest(http.MethodGet, url, nil)
     if err != nil {
         result.err = err
         return result
