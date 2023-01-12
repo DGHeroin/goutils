@@ -4,6 +4,7 @@ import (
     "io"
     "math/rand"
     "net/http"
+    "sync"
     "time"
 )
 
@@ -94,5 +95,40 @@ func UseRandomUserAgent() {
     requestOptions = append(requestOptions, func(request *http.Request) {
         n := rand.Int() % len(userAgents)
         request.Header.Set("User-Agent", userAgents[n])
+    })
+}
+
+func UseRateLimit(duration time.Duration, n int) {
+    var (
+        N = n
+        t time.Time
+        m sync.Mutex
+    )
+    requestOptions = append(requestOptions, func(request *http.Request) {
+        m.Lock()
+        defer m.Unlock()
+        now := time.Now()
+        defer func() {
+            t = now
+        }()
+        if N > 0 {
+            N--
+            return
+        }
+
+        dt := now.Sub(t)
+        var nextTime time.Duration
+        if dt >= duration { // refill
+            N = n
+        } else {
+            nextTime = duration - dt
+        }
+        if N > 0 {
+            N--
+            return
+        }
+        time.Sleep(nextTime)
+        N = n - 1
+        return
     })
 }
